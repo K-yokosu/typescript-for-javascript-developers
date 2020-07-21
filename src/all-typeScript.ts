@@ -181,7 +181,7 @@ console.log(double('ko'));
 
 //class 
 class Person{
-  //constructorの前にメンバー変数を宣言すると共に型を指定する
+  //constructorの前にメンバー変数を宣言すると共に型を指定する(メンバー変数の初期化)
   name: string;
   age: number;
 
@@ -238,3 +238,58 @@ class Android extends Human{
 let tar = new Android('ko', 24, 'Japan');
 // console.log(tar.age);
 console.log(tar.profile());
+
+
+//初期化処理の自動化
+//この使い方でのpublicは省略できない
+class Peason{
+  constructor(public name: string, protected age: number){}
+}
+const me = new Peason('kou',24);
+console.log(me);
+
+
+//getter setter アクセサー
+//get 参照
+//set 値を設定する時
+
+//要件
+// * owner
+//  * 所有者
+//  * 初期化時に設定できる。
+//  * 途中で変更できない
+//  * 参照できる。
+// * secretNumber
+//  * 個人番号
+//  * 初期化時に設定できる。
+//  * 途中で変更できる
+//  * 参照できない。
+class MyNumberCard{
+  private _owner: string;
+  private _secretNumber: number;
+
+  constructor(owner: string, secretNumber: number){
+    this._owner = owner;
+    this._secretNumber = secretNumber;
+  }
+
+  get owner(){
+    return this._owner;
+  }
+  set secretNumber(secretNumber: number){
+    this._secretNumber = secretNumber;
+  }
+
+  debugPrint(){
+    return `secretNumber: ${this._secretNumber}`;
+  }
+}
+
+let card = new MyNumberCard('こう', 123455);
+// card.owner = 'Ham';
+console.log(card.owner);
+// card.secretNumber;
+// card._secretNumber
+console.log(card.debugPrint());
+card.secretNumber = 111111;
+console.log(card.debugPrint());
