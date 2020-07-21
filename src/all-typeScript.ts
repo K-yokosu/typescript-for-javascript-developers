@@ -154,3 +154,87 @@ let defaultParamater: (arg1: number, arg2?: number) => number = (
 }
 console.log(defaultParamater(2));
 
+//Rest paramater
+//引数全てをうけとるパラメータ
+const sum: (...value: number[]) => void = (
+  ...value: number[]
+) => {
+  console.log(value);
+}
+sum(1,2,3,4,5);
+
+//overload 同じ名前の関数でありながら引数の数や戻り値が違う関数のこと
+//signatureを使う必要がある
+//overload の関数ではsignatureで型制限しているので、any型でOK
+function double(value: number): number;
+function double(value: string): string;
+
+function double(value: any): any{
+  // return value * 2;
+  if(typeof value === 'number'){
+    return value * 2;
+  }else{
+    return value + value;
+  }
+}
+console.log(double('ko'));
+
+//class 
+class Person{
+  //constructorの前にメンバー変数を宣言すると共に型を指定する
+  name: string;
+  age: number;
+
+  //引数にも型をアノテーションする
+  //constructorには戻り値がないので型はいらない。voidですら書くとエラーになる
+  constructor(name: string, age: number){
+    this.name = name;
+    this.age = age;
+  }
+
+  profile(): string{
+    //テンプレートストリングを使っている
+    return `name: ${this.name}, age: ${this.age}`
+  }
+}
+
+let taro = new Person('ko', 24);
+console.log(taro.profile());
+
+
+//アクセス修飾子
+//public は書いても書かなくても一緒なので書かないのが習慣
+//private は直接メンバーにはアクセスできず、関数等での参照はできる。またここではHumanクラスのみでアクセスできる
+//protected は子クラスでも参照できる
+class Human {
+  public name: string;
+  // private age: number;
+  protected age: number;
+  protected nationality?: string;
+
+  //引数にも型をアノテーションする
+  //constructorには戻り値がないので型はいらない。voidですら書くとエラーになる
+  constructor(name: string, age: number, nationality?: string) {
+    this.name = name;
+    this.age = age;
+    this.nationality = nationality;
+  }
+
+  profile(): string {
+    //テンプレートストリングを使っている
+    return `name: ${this.name}, age: ${this.age}`
+  }
+}
+class Android extends Human{
+  constructor(name: string, age: number, nationality?: string){
+    //親クラスのconstructorを呼べる。必要な引数を書いてやる
+    super(name, age, nationality);
+  }
+  profile(): string {
+    return `name: ${this.name}, age: ${this.age}, nationality: ${this.nationality}`;
+  }
+}
+
+let tar = new Android('ko', 24, 'Japan');
+// console.log(tar.age);
+console.log(tar.profile());
