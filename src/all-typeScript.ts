@@ -529,3 +529,27 @@ let pro = {
 } as const; //as const 一つで全てのプロパティにreadonlyがつくので便利
 // pro.name = 'Yoko';
 // pro.height = 180;
+
+
+//Nullable型
+//tsconfig.json のstrictNullChecksが trueなら nullは許容されない
+//仮にfalseにした場合、どんなものにもnullが許容される。nullableな状態。
+//データの秩序がなくなるので通常はtrueのままにしておく。
+//union型を使うことで実現させる。
+let prof: { name: string, age: number | null} = {
+  name: 'Ham',
+  age: null
+}
+
+
+//indexsignature
+//プロパティはあらかじめ型アノテーションしておく必要がある。
+interface Profi{
+  underTwenty: boolean;
+  [index: string]: string | number | boolean;
+}
+let profi: Profi = {underTwenty: false};
+//How to write index signatures
+// { [ index: typeForIndex]: typeForValue }
+profi.name = 'Ham';
+profi.age = 43;
