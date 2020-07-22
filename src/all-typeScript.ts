@@ -293,3 +293,239 @@ console.log(card.owner);
 console.log(card.debugPrint());
 card.secretNumber = 111111;
 console.log(card.debugPrint());
+
+
+//readonly 読み取り専用のプロパティ
+// class VisaCard{
+//   readonly owner: string;
+
+//   constructor(owner: string){
+//     this.owner = owner;
+//   }
+// }
+
+//簡略系
+//readonly をつけるということは読めるのでpublicを削ることはできる。
+//しかし、他の人のために省略しないほうがいいと思っている。
+class VisaCard{
+  constructor(public readonly owner: string){}
+}
+let myVisaCard = new VisaCard('kou');
+console.log(myVisaCard.owner);
+// myVisaCard.owner = 'ham';
+
+
+//静的メンバ
+//いつも変化しないメンバを作りたい時に使う
+//new 演算子でインスタンスを作る必要がない
+class Me{
+  static isProgrammer: boolean = true;
+  static firstName: string = 'Kou';
+  static lastName: string = 'Yokota';
+
+  static work(){
+    return `Hey, guys! This is ${this.firstName}! Are you interested in TypeScript?`;
+  }
+}
+
+// let you = new Me();
+// console.log(you.isProgrammer);
+
+console.log(Me.isProgrammer);
+console.log(Me.work());
+
+
+//namespace 名前空間
+//同じ名前空間には同じクラス名は使えない
+namespace Japanese{
+  //外からアクセスできるようにするにはexport が必要
+  export namespace Tokyo{
+    export class Pet {
+      constructor(public name: string) { }
+    }
+  }
+}
+
+namespace English{
+  export class Pet {
+    constructor(
+      public firstName: string,
+      public middleName: string,
+      public lastName: string
+    ) { }
+  }
+}
+
+
+const i = new Japanese.Tokyo.Pet('バジル');
+console.log(i.name);
+
+const michael = new English.Pet('Michael', 'Joseph', 'Jackson');
+console.log(michael);
+
+
+//継承
+class Animal {
+  constructor(public name: string) { }
+  run(): string {
+    return 'I can run';
+  }
+}
+
+class Lion extends Animal {
+  public speed: number;
+  constructor(name: string, speed: number) {
+    super(name);
+    //nameは親、speedは子クラスで初期化していることを自明にしている
+    this.speed = speed;
+  }
+  run(): string {
+    return `${super.run()} ${this.speed}km/h.`;
+  }
+}
+
+// let animal = new Animal();
+// console.log(animal.run());
+
+// let lion = new Lion();
+// console.log(lion.run());
+
+console.log(new Animal('Mickey').run());
+console.log(new Lion('Simba', 80).run());
+
+
+//抽象メソッド
+//必ずoverrideする必要がある
+//signatureの宣言
+//実装忘れの防止になる
+abstract class Kemono{
+  abstract cry(): string;
+}
+
+class Rabbit extends Kemono{
+  cry(){
+    return 'ku';
+  }
+}
+// class Tiger extends Kemono{}
+
+
+//interface
+//TypeScriptは単一継承なので複数のクラスを継承できないが、複数のinterfaceは実装できる
+//実装忘れの防止になる
+class Mahotsukai { }
+class Souryo { }
+
+class Taro extends Mahotsukai { }
+
+interface Kenja {
+  ionazun(): void;
+}
+
+interface Senshi {
+  kougeki(): void;
+}
+
+class Jiro implements Kenja, Senshi {
+  ionazun(): void {
+    console.log('ionazun');
+  }
+  kougeki(): void {
+    console.log('kougeki');
+  }
+}
+
+const jiro = new Jiro();
+jiro.ionazun();
+jiro.kougeki();
+
+
+// 型の互換性
+let fooCompatible: any;
+let barCompatible: string = 'TypeScript';
+
+console.log(typeof fooCompatible);
+
+fooCompatible = barCompatible;
+
+console.log(typeof fooCompatible);
+
+let foo: string;
+let bar: number = 1;
+
+// foo = bar;
+
+// let fooString: string;
+// let barString: string = 'string';
+// fooString = barString;
+
+// let fooStringLiteral: 'fooStringLiteral' = 'fooStringLiteral';
+// fooString = fooStringLiteral;
+
+// let fooNumber: number;
+// let fooNumberLiteral: 1976 = 1976;
+// fooNumber = fooNumberLiteral;
+
+// interface Animal {
+//   age: number;
+//   name: string;
+// }
+
+// class Person {
+//   constructor(public age: number, public name: string) { }
+// }
+
+// let me: Animal;
+// me = new Person(43, 'kou');
+
+
+//ジェネリクス
+//汎用性
+//型違いの関数を統合できる
+// const echo = (arg: number): number => {
+//   return arg;
+// };
+// const echo = (arg: string): string => {
+//   return arg;
+// };
+const echo = <T>(arg: T): T => {
+  return arg;
+};
+console.log(echo<number>(100));
+console.log(echo<string>('Hello'));
+
+class Mirror<T>{
+  constructor(public value: T){}
+
+  echo(): T{
+    return this.value;
+  }
+}
+
+console.log(new Mirror<number>(123).echo());
+console.log(new Mirror<string>('Hello').echo());
+
+
+//型アサーション
+//左辺ではなく右辺で型を指定するほうが、より早く型を教えれるので健全らしい
+let name: any = 'ham';
+// let length = name.length as number;
+// let length = (name as string).length;
+let length = (<string>name).length;  //このアサーション方法はJSXと似ているので推奨されていない
+
+// length = 'foo';
+
+
+//constアサーション
+let namu = 'kou';
+namu = 'Ham';
+
+let nickname = 'Ham' as const; //Hamしか代入できなくなるので実質定数
+// nickname = 'Hamtaro';
+
+let pro = {
+  name: 'kou',
+  height: 172
+} as const; //as const 一つで全てのプロパティにreadonlyがつくので便利
+// pro.name = 'Yoko';
+// pro.height = 180;
